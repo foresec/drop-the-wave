@@ -1,14 +1,18 @@
+import BasicPlaySlider from "@/components/player/BasicPlaySlider";
 import { css } from "@emotion/react";
 
 export default function PlayBar() {
   return (
     <div css={musicBarWrapperCSS}>
-      <div css={playBarWrapperCSS}>PlayBar</div>
+      <div css={playBarWrapperCSS}>
+        <BasicPlaySlider />
+      </div>
     </div>
   );
 }
 
 const musicBarWrapperCSS = css`
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -19,6 +23,7 @@ const musicBarWrapperCSS = css`
 `;
 
 const playBarWrapperCSS = css`
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
