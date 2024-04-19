@@ -53,7 +53,7 @@ export default function BasicPlaySlider() {
         <div css={[barBackgroundCSS, { width: `${slideX}%` }]} />
         <div css={[grabCircleCSS, { left: `${slideX}%` }]} />
       </div>
-      <button onClick={handlePlay}>Play</button> {/* 재생 버튼 */}
+      <button onClick={handlePlay}>Play</button>
     </div>
   );
 }

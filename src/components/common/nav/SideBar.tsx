@@ -9,6 +9,10 @@ interface SideBarProps {
 }
 
 export default function SideBar({ isOpen, toggleNav }: SideBarProps) {
+  const arrowRotate = (isOpen: boolean) => css`
+    transform: rotate(${isOpen ? "180deg" : "0deg"});
+    transition: transform 0.3s ease;
+  `;
   return (
     <nav css={[sideBarWrapperCSS, isOpen && openSideBarCSS]}>
       <div css={menuItemWrapperCSS}>
@@ -22,7 +26,7 @@ export default function SideBar({ isOpen, toggleNav }: SideBarProps) {
       <div css={logoImgWrapperCSS}>
         <Image css={logoImgCSS} src={SpotifyLogo} alt="spotify-logo" />
       </div>
-      <div onClick={toggleNav} css={navBtnCSS}>
+      <div onClick={toggleNav} css={[navBtnCSS, arrowRotate(isOpen)]}>
         {ARROW}
       </div>
     </nav>
