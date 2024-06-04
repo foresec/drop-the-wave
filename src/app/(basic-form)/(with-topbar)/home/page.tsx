@@ -1,18 +1,21 @@
 "use client";
+import TopBar from "@/components/common/nav/TopBar";
 import { css } from "@emotion/react";
 
 export default function HomePage() {
   return (
     <div css={homePageWrapperCSS}>
-      {/* <h1>Home</h1> */}
-      <div css={themeWrapperCSS}>
-        <div css={themeTitleCSS}>테마 제목</div>
-        <div css={themeDetailWrapperCSS}>
-          {[...Array(10)].map((_, index) => (
-            <div key={index} css={tmpe2}>
-              musicCard
-            </div>
-          ))}
+      <TopBar />
+      <div css={homePageContentCSS}>
+        <div css={themeWrapperCSS}>
+          <div css={themeTitleCSS}>테마 제목</div>
+          <div css={themeDetailWrapperCSS}>
+            {[...Array(10)].map((_, index) => (
+              <div key={index} css={tmpe2}>
+                musicCard
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -20,14 +23,20 @@ export default function HomePage() {
 }
 
 const homePageWrapperCSS = css`
+  position: relative;
   height: 100%;
+  border-radius: 10px;
   background-color: var(--gray-color-2);
-  border-radius: 0px 0px 10px 10px;
-  padding: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
+const homePageContentCSS = css`
+  padding: 20px;
+  margin-bottom: 50px;
 `;
 
 const themeWrapperCSS = css`
-  padding: 10px;
 `;
 
 const themeTitleCSS = css`

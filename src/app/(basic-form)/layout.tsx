@@ -49,7 +49,7 @@ const layoutWrapperCSS = css`
 const contentWrapperCSS = css`
   overflow-x: hidden;
   /* overflow-y: hidden; */
-  flex: 7;
+  flex: 4;
   padding: 10px;
   border-radius: 10px;
 `;

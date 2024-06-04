@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import Image from "next/image";
 import SpotifyLogo from "@/assets/png/Spotify_Logo_CMYK_White.png";
 import { ARROW } from "@/assets/svg/icons";
+import { useRouter } from "next/navigation";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface SideBarProps {
 }
 
 export default function SideBar({ isOpen, toggleNav }: SideBarProps) {
+  const router = useRouter();
   const arrowRotate = (isOpen: boolean) => css`
     transform: rotate(${isOpen ? "180deg" : "0deg"});
     transition: transform 0.3s ease;
@@ -16,15 +18,17 @@ export default function SideBar({ isOpen, toggleNav }: SideBarProps) {
   return (
     <nav css={[sideBarWrapperCSS, isOpen && openSideBarCSS]}>
       <div css={menuItemWrapperCSS}>
-        <div css={titleCSS}>logo</div>
-        <div css={menuItemCSS}>Home</div>
-        <div css={menuItemCSS}>Search</div>
+        {/* <div css={titleCSS}>logo</div> */}
+        <div css={menuItemCSS} onClick={() => router.push("/home")}>Home</div>
+        <div css={menuItemCSS} onClick={() => router.push("/search")}>
+          Search
+        </div>
       </div>
       <div css={playListWrapperCSS}>
         <div css={menuItemCSS}>Playlist</div>
       </div>
       <div css={logoImgWrapperCSS}>
-        <Image css={logoImgCSS} src={SpotifyLogo} alt="spotify-logo" />
+        <Image css={logoImgCSS} src={SpotifyLogo} alt="spotify-logo" priority/>
       </div>
       <div onClick={toggleNav} css={[navBtnCSS, arrowRotate(isOpen)]}>
         {ARROW}
@@ -61,7 +65,7 @@ const titleCSS = css`
 `;
 
 const menuItemCSS = css`
-  padding: 10px;
+  padding: 20px 10px;
   color: var(--default-white-color);
 `;
 

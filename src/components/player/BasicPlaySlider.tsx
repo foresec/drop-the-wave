@@ -1,11 +1,16 @@
 import { css } from "@emotion/react";
 import { useState, MouseEvent, useEffect } from "react";
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
+
+import { IoMdSkipForward } from "react-icons/io";
+import { IoMdSkipBackward } from "react-icons/io";
 
 export default function BasicPlaySlider() {
   const [slideX, setSlideX] = useState(0);
-  const [audio] = useState(new Audio("/colour.mp3"));
+  // const [audio] = useState(new Audio("/colour.mp3"));
   const [isPlaying, setIsPlaying] = useState(false);
-	const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   // click시 이동
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
@@ -14,38 +19,38 @@ export default function BasicPlaySlider() {
     const newX = Math.min(100, Math.max(0, (offsetX / sliderWidth) * 100));
     setSlideX(newX);
 
-		// audio duration중 click한 만큼 이동
-    const duration = audio.duration;
-    const newTime = (newX / 100) * duration;
-    audio.currentTime = newTime;
+    // audio duration중 click한 만큼 이동
+    // const duration = audio.duration;
+    // const newTime = (newX / 100) * duration;
+    // audio.currentTime = newTime;
   };
 
-	// public mp3 재생
+  // public mp3 재생
   const handlePlay = () => {
-    if (!isPlaying) {
-      audio.play();
-      setIsPlaying(true);
-    } else {
-      audio.pause();
-      setIsPlaying(false);
-    }
+    // if (!isPlaying) {
+    //   audio.play();
+    //   setIsPlaying(true);
+    // } else {
+    //   audio.pause();
+    //   setIsPlaying(false);
+    // }
   };
 
-  useEffect(() => {
-		// audio의 현재 시간으로 slideX계산
-    const updateSlidePosition = () => {
-      const currentTime = audio.currentTime;
-      const duration = audio.duration;
-      const newX = (currentTime / duration) * 100;
-      setSlideX(newX);
-    };
+  // useEffect(() => {
+  // 	// audio의 현재 시간으로 slideX계산
+  //   const updateSlidePosition = () => {
+  //     const currentTime = audio.currentTime;
+  //     const duration = audio.duration;
+  //     const newX = (currentTime / duration) * 100;
+  //     setSlideX(newX);
+  //   };
 
-    audio.addEventListener("timeupdate", updateSlidePosition);
+  //   audio.addEventListener("timeupdate", updateSlidePosition);
 
-    return () => {
-      audio.removeEventListener("timeupdate", updateSlidePosition);
-    };
-  }, [audio]);
+  //   return () => {
+  //     audio.removeEventListener("timeupdate", updateSlidePosition);
+  //   };
+  // }, [audio]);
 
   return (
     <div css={basicplaySliderWrapperCSS}>
@@ -53,7 +58,12 @@ export default function BasicPlaySlider() {
         <div css={[barBackgroundCSS, { width: `${slideX}%` }]} />
         <div css={[grabCircleCSS, { left: `${slideX}%` }]} />
       </div>
-      <button onClick={handlePlay}>Play</button>
+      <div css={iconWrapperCSS}>
+        <IoMdSkipBackward />
+        <FaPlay onClick={handlePlay} color="var(--default-white-color)" />
+        <IoMdSkipForward />
+        {/* <FaPause /> */}
+      </div>
     </div>
   );
 }
@@ -88,4 +98,14 @@ const barBackgroundCSS = css`
   height: 100%;
   background-color: var(--default-purple-color);
   border-radius: 5px;
+`;
+
+const iconWrapperCSS = css`
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > *:not(:last-child) {
+    margin-right: 20px; 
+  }
 `;
