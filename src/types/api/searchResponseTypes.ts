@@ -93,6 +93,8 @@ type TrackObject = {
 };
 
 type SearchResponseTypes = {
+	length: number;
+	nextCursor: any;
   tracks: {
     href: string;
     limit: number;

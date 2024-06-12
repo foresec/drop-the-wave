@@ -1,45 +1,23 @@
-import { getSearchResultAPI } from "@/api/search/getSearchResultAPI";
 import { css } from "@emotion/react";
-import { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 interface SearchBarProps {
-  onSearchResults: (results: any) => void;
+  onSearch: (q: string) => void;
 }
 
-export default function SearchBar({ onSearchResults }: SearchBarProps) {
-
-
+const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [searchVal, setSearchVal] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setSearchVal(val);
+    onSearch(val.trim());
   };
-
-  const handleSearch = async (q: string) => {
-    try {
-      const response = await getSearchResultAPI({
-        q: q,
-        type: ["track", "artist"],
-        market: "KR",
-        limit: 10,
-        offset: 0,
-      });
-      onSearchResults(response);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  useEffect(() => {
-    if (searchVal !== "") handleSearch(searchVal);
-  }, [searchVal]);
-
-
 
   return (
     <div css={searchBarWrapperCSS}>
       <input
+        id="searchBar"
         css={inputCSS}
         value={searchVal}
         onChange={handleInputChange}
@@ -47,7 +25,9 @@ export default function SearchBar({ onSearchResults }: SearchBarProps) {
       />
     </div>
   );
-}
+};
+
+export default React.memo(SearchBar);
 
 const searchBarWrapperCSS = css`
   position: sticky;

@@ -1,56 +1,129 @@
 "use client";
+import { getSearchResultAPI } from "@/api/search/getSearchResultAPI";
 import Track from "@/components/Search/Track";
 import Spinner from "@/components/common/loading/Spinner";
 import SearchBar from "@/components/common/nav/SearchBar";
-import SearchBarWithTanstack from "@/components/common/nav/SearchBarWithTanstack";
+import useDebounce from "@/hooks/useDebounce";
+import useIntersectionObserver from "@/hooks/useIntersectoinObserver";
+
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useCallback, useRef, useState } from "react";
 
 export default function SearchPage() {
-  const [searchResults, setSearchResults] =
-    useState<SearchResponseTypes | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchVal, setSearchVal] = useState("");
+  const ITEMS_PER_PAGE = 10;
+  const observerRef = useRef(null);
 
-
-  const handleSearchResults = (results: SearchResponseTypes | null) => {
-    setSearchResults(results);
+  const handleSearchVal = (val: string) => {
+    setSearchVal(val);
   };
 
-  const handleLoadingChange = (loading: boolean) => {
-    setIsLoading(loading);
+  // Debounce
+  const debouncedSearchVal = useDebounce(searchVal, 500);
+
+  // Data(Infinite)
+  const handleSearchForInfinite = async (
+    q: string,
+    limit: number,
+    offset: number
+  ) => {
+    const response = await getSearchResultAPI({
+      q: q,
+      type: ["track"],
+      market: "KR",
+      limit: limit,
+      offset: offset,
+    });
+    return response;
   };
 
-  console.log(isLoading, searchResults);
+  const {
+    data: searchResults,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["searchInfinite", { searchVal: debouncedSearchVal }],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) =>
+      handleSearchForInfinite(debouncedSearchVal, ITEMS_PER_PAGE, pageParam),
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      let nextOffset = lastPageParam + ITEMS_PER_PAGE;
+      return nextOffset;
+    },
+    enabled: !!debouncedSearchVal.trim(),
+  });
+
+  // Infinite Scroll
+  const observerCallback: IntersectionObserverCallback = useCallback(
+    (entries) => {
+      const lastPage = searchResults?.pages[searchResults.pages.length - 1];
+      entries.forEach((entry) => {
+        if (
+          entry.isIntersecting &&
+          lastPage &&
+          lastPage.tracks.items.length > 0
+        ) {
+          fetchNextPage();
+        }
+      });
+    },
+    [fetchNextPage, searchResults?.pages]
+  );
+
+  useIntersectionObserver({
+    target: observerRef,
+    onObserverCallback: observerCallback,
+  });
 
   return (
     <div css={searchPageWrapperCSS}>
-      <SearchBarWithTanstack
-        onSearchResults={handleSearchResults}
-        onLoadingChange={handleLoadingChange}
-      />
-      {/* <SearchBar onSearchResults={handleSearchResults} /> */}
+      <SearchBar onSearch={handleSearchVal} />
       <div css={searchWrapperCSS}>
-        {/* Loading */}
-        {isLoading && <Spinner />}
-        {/* empty */}
-        {!searchResults && !isLoading && <div css={titleCSS}>EMPTY</div>}
-        {/* tracks */}
-        {searchResults && searchResults.tracks && (
+        {/* DATA EXIST */}
+        {searchResults?.pages ? (
           <div css={partWrapperCSS}>
             <div css={titleCSS}>곡</div>
-						{/* 실제 TRACK 데이터 */}
-            {searchResults.tracks.items?.length !== 0 ? (
-              <div css={trackListWrapperCSS}>
-                {searchResults.tracks.items?.map((item, idx) => (
-                  <Track key={idx} track={item} />
-                ))}
+            {searchResults.pages.map((page, pageIdx) => (
+              <div key={pageIdx}>
+                {page.tracks && (
+                  <div>
+                    {/* TRACK 데이터 */}
+                    {page.tracks.items.length !== 0 ? (
+                      <div>
+                        {page.tracks.items.map((item, idx) => (
+                          <Track key={idx} track={item} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div css={emtpyDescriptionCSS}>검색된 곡이 없습니다.</div>
+                    )}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div css={emtpyDescriptionCSS}>검색된 곡이 없습니다.</div>
-            )}
+            ))}
+            {/* 무한 스크롤 LOADING */}
+            <div ref={observerRef}>{isFetching && <Spinner />}</div>
           </div>
+        ) : (
+          <>
+            {/* LOADING */}
+            {isLoading && <Spinner />}
+            {/* EMPTY */}
+            {!searchResults && !isLoading && !isError && (
+              <div css={titleCSS}>검색하지 않아서 기본형태</div>
+            )}
+            {/* ERROR */}
+            {isError && (
+              <div css={titleCSS}>
+                {error.message}와 같은 에러가 발생했습니다.
+              </div>
+            )}
+          </>
         )}
-        {/* artists */}
       </div>
     </div>
   );
@@ -83,6 +156,5 @@ const titleCSS = css`
 
 const emtpyDescriptionCSS = css`
   padding: 0px 10px;
-	font-size: var(--font-size-h6);
+  font-size: var(--font-size-h6);
 `;
-const trackListWrapperCSS = css``;
