@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-		"types": ["@emotion/react/types/css-prop"],
+    "types": ["@emotion/react/types/css-prop"],
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

@@ -14,7 +14,6 @@ export default function SearchPage() {
   const [searchVal, setSearchVal] = useState("");
   const ITEMS_PER_PAGE = 10;
   const observerRef = useRef(null);
-
   const handleSearchVal = (val: string) => {
     setSearchVal(val);
   };

@@ -1,8 +1,12 @@
 "use client";
 import TopBar from "@/components/common/nav/TopBar";
+import useSupabaseProviderToken from "@/hooks/login/useSupabaseProviderToken";
+
 import { css } from "@emotion/react";
 
 export default function HomePage() {
+  useSupabaseProviderToken();
+
   return (
     <div css={homePageWrapperCSS}>
       <TopBar />
@@ -36,8 +40,7 @@ const homePageContentCSS = css`
   margin-bottom: 50px;
 `;
 
-const themeWrapperCSS = css`
-`;
+const themeWrapperCSS = css``;
 
 const themeTitleCSS = css`
   font-size: var(--font-size-h2);
